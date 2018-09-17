@@ -2,14 +2,14 @@
 
 ### 麦子钱包 Scatter API 开发示例
 
-#### /sample01
+#### sample01
 
 基于 Scatter 接口的 EOS 基础操作示例
 
 测试地址：
 http://developer.mathwallet.org/sample01
 
-#### /sample02
+#### sample02
 
 基于 Scatter 接口的 EOS 原力 基础操作示例
 
