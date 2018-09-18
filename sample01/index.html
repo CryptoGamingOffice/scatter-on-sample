@@ -17,6 +17,8 @@
     <script src="js/eos.min.js"></script>
 
     <script>
+
+      // EOS RPC 网络设置
       var network = {
         blockchain:'eos',
         protocol:'https',
@@ -25,6 +27,8 @@
         chainId:'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906'
       };
       var currentAccount = null;
+
+      // 连接
       function connect(){
         scatter.connect('MY_GAME_NAME').then(connected => {
           if(connected){
@@ -34,6 +38,8 @@
           }
         });
       }
+
+      // 登录，获取 EOS 账户
       function login(){
         // scatter.forgetIdentity();
         scatter.getIdentity({accounts:[network]}).then(result => {
@@ -44,6 +50,7 @@
         });
       }
 
+      // 转账
       function transfer(){
         if (currentAccount == null) {
             alert('请先获取 EOS 账户');
@@ -51,7 +58,7 @@
         // alert(network.protocol+'://'+network.host);
         var eos = scatter.eos(network, Eos);
 
-        eos.transfer(currentAccount.name, 'giveeostoken', '0.0001 EOS', 'scatter interfaces').then(result => {
+        eos.transfer(currentAccount.name, 'giveeostoken', '0.0001 EOS', 'scatter 转账测试').then(result => {
           alert('result:'+JSON.stringify(result));
         }).catch(error => {
           alert('error:'+JSON.stringify(error));
@@ -61,9 +68,15 @@
     </script>
   </head>
   <body>
-    <h1>Scatter.js 调用方法实例</h1>
-    <button type="button" class="btn btn-outline-success" onclick="connect()">连接</button><br><br>
-    <button type="button" class="btn btn-outline-success" onclick="login()">获取 EOS 账户</button><br><br>
-    <button type="button" class="btn btn-outline-success" onclick="transfer()">转账</button>
+  <div class="container bs-docs-container">
+    <h3>Scatter.js 调用方法实例 - EOS</h3>
+    <div class="row">
+      <div class="col-md-12"><button type="button" class="btn btn-primary btn-lg btn-block" onclick="connect()">连接</button></div>
+      <br><br><br>
+      <div class="col-md-12"><button type="button" class="btn btn-success btn-lg btn-block" onclick="login()">获取 EOS 账户</button></div>
+      <br><br><br>
+      <div class="col-md-12"><button type="button" class="btn btn-warning btn-lg btn-block" onclick="transfer()">转账</button></div>
+    </div>
+  </div>
   </body>
 </html>

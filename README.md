@@ -7,7 +7,10 @@
 基于 Scatter 接口的 EOS 基础操作示例
 
 测试地址：
-http://developer.mathwallet.org/sample01
+
+http://developer.mathwallet.org/sample01/
+
+https://developer.mathwallet.org/sample01/
 
 #### sample02
 
@@ -16,7 +19,10 @@ http://developer.mathwallet.org/sample01
 EOS 原力与 EOS 的唯一区别是在 network 中需要将参数 blockchain:'eos' 改为 blockchain:'eosforce'
 
 测试地址：
-http://developer.mathwallet.org/sample02
+
+http://developer.mathwallet.org/sample02/
+
+https://developer.mathwallet.org/sample02/
 
 ### 测试方法
 
