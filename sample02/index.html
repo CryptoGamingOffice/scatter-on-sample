@@ -62,7 +62,7 @@
       // 转账
       function transfer(){
         if (currentAccount == null) {
-            alert('请先获取 EOS 账户');
+            alert('请先登录');
         }
         // alert(network.protocol+'://'+network.host);
         var eos = scatter.eos(network, Eos);
@@ -80,9 +80,9 @@
   <div class="container bs-docs-container">
     <h3>Scatter.js 调用方法实例 - EOS Force</h3>
     <div class="row">
-      <div class="col-md-12"><button type="button" class="btn btn-primary btn-lg btn-block" onclick="connect()">连接</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-primary btn-lg btn-block" onclick="connect()">测试连接</button></div>
       <br><br><br>
-      <div class="col-md-12"><button type="button" class="btn btn-success btn-lg btn-block" onclick="login()">获取 EOS 账户</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-success btn-lg btn-block" onclick="login()">登录</button></div>
       <br><br><br>
       <div class="col-md-12"><button type="button" class="btn btn-warning btn-lg btn-block" onclick="transfer()">转账</button></div>
     </div>

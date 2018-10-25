@@ -41,3 +41,14 @@ chainId: 038f4b0fc8ff18a4f0842a8f0564611f6e96e8535901dd45e43ac8691a1c4dca
 创建测试账号&申请测试Token：http://jungle.cryptolions.io/
 
 3 使用 Scatter 插件，添加【网络】和【密钥】，然后新建身份，在Chrome中进行debug。
+
+### 一些其他的有用参考
+
+eosjs说明文档
+https://github.com/eoshackathon/eos_dapp_development_cn/blob/master/docs/eosjs_manual.md
+
+太平一犬的开源DICE项目
+https://github.com/gpmn/diceol
+
+环境和常用开发文档
+https://github.com/eoshackathon/eos_dapp_development_cn

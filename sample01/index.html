@@ -54,7 +54,7 @@
       // 转账
       function transfer(){
         if (currentAccount == null) {
-            alert('请先获取 EOS 账户');
+            alert('请先登录');
         }
 
         // alert('account:'+currentAccount.name);
@@ -73,7 +73,7 @@
       // airgrab
       function airgrab(){
         if (currentAccount == null) {
-            alert('请先获取 EOS 账户');
+            alert('请先登录');
         }
         // alert(network.protocol+'://'+network.host);
         // alert('account:'+currentAccount.name);
@@ -100,21 +100,43 @@
         }).catch(error => {
           alert('error:'+JSON.stringify(error));
         });
-
       }
+
+      // airgrab2
+      function airgrab2(){
+        if (currentAccount == null) {
+            alert('请先登录');
+        }
+        // alert(network.protocol+'://'+network.host);
+        // alert('account:'+currentAccount.name);
+
+        var eos = scatter.eos(network, Eos);
+
+        eos.contract("eosatidiumio").then(contr => {
+            contr.signup(currentAccount.name, '0.0000 ATD', {
+              authorization: [currentAccount.name]
+            }).then(result => {
+                console.log(result);
+            });
+        });
+      }
+
+
     </script>
   </head>
   <body>
   <div class="container bs-docs-container">
     <h3>Scatter.js 调用方法实例 - EOS</h3>
     <div class="row">
-      <div class="col-md-12"><button type="button" class="btn btn-primary btn-lg btn-block" onclick="connect()">连接</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-primary btn-lg btn-block" onclick="connect()">测试连接</button></div>
       <br><br><br>
-      <div class="col-md-12"><button type="button" class="btn btn-success btn-lg btn-block" onclick="login()">获取 EOS 账户</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-success btn-lg btn-block" onclick="login()">登录</button></div>
       <br><br><br>
       <div class="col-md-12"><button type="button" class="btn btn-warning btn-lg btn-block" onclick="transfer()">转账</button></div>
       <br><br><br>
-      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">ATD</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">ATD 1</button></div>
+      <br><br><br>
+      <div class="col-md-12"><button type="button" class="btn btn-info btn-lg btn-block" onclick="airgrab2()">ATD 2</button></div>
     </div>
   </div>
   </body>

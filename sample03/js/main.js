@@ -34,7 +34,7 @@
       // 转账
       function transfer(){
         if (currentAccount == null) {
-            alert('请先获取 EOS 账户');
+            alert('请先登录');
         }
         // alert(network.protocol+'://'+network.host);
         var eos = scatter.eos(network, Eos);
