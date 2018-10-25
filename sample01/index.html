@@ -45,6 +45,7 @@
         scatter.getIdentity({accounts:[network]}).then(result => {
           currentAccount =  result.accounts[0];
           alert('account:'+JSON.stringify(currentAccount));
+          // alert('account:'+currentAccount.name);
         }).catch(error => {
           alert('error:'+JSON.stringify(error));
         });
@@ -55,11 +56,47 @@
         if (currentAccount == null) {
             alert('请先获取 EOS 账户');
         }
+
+        // alert('account:'+currentAccount.name);
+
         // alert(network.protocol+'://'+network.host);
         var eos = scatter.eos(network, Eos);
 
         eos.transfer(currentAccount.name, 'giveeostoken', '0.0001 EOS', 'scatter 转账测试').then(result => {
           alert('result:'+JSON.stringify(result));
+        }).catch(error => {
+          alert('error:'+JSON.stringify(error));
+        });
+
+      }
+
+      // airgrab
+      function airgrab(){
+        if (currentAccount == null) {
+            alert('请先获取 EOS 账户');
+        }
+        // alert(network.protocol+'://'+network.host);
+        // alert('account:'+currentAccount.name);
+
+        var eos = scatter.eos(network, Eos);
+
+        eos.transaction({
+            actions: [
+                {
+                    account: 'eosatidiumio',
+                    name:    'signup',
+                    authorization: [{
+                        actor:      currentAccount.name,
+                        permission: 'active'
+                    }],
+                    data: {
+                        owner:    currentAccount.name,
+                        quantity: '0.0000 ATD'
+                    }
+                }
+            ]
+        }).then(result => {
+          alert('success!');
         }).catch(error => {
           alert('error:'+JSON.stringify(error));
         });
@@ -76,6 +113,8 @@
       <div class="col-md-12"><button type="button" class="btn btn-success btn-lg btn-block" onclick="login()">获取 EOS 账户</button></div>
       <br><br><br>
       <div class="col-md-12"><button type="button" class="btn btn-warning btn-lg btn-block" onclick="transfer()">转账</button></div>
+      <br><br><br>
+      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">ATD</button></div>
     </div>
   </div>
   </body>
