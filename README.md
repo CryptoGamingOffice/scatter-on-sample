@@ -2,7 +2,7 @@
 
 ### 麦子钱包 Scatter API 开发示例
 
-#### sample01
+#### eos/sample01
 
 基于 Scatter 接口的 EOS 基础操作示例
 
@@ -12,7 +12,7 @@ http://developer.mathwallet.org/sample01/
 
 https://developer.mathwallet.org/sample01/
 
-#### sample-eosforce
+#### eosforce/sample02
 
 基于 Scatter 接口的 EOS 原力 基础操作示例
 
