@@ -62,15 +62,38 @@
         // alert(network.protocol+'://'+network.host);
         var eos = scatter.eos(network, Eos);
 
-        eos.transfer(currentAccount.name, 'giveeostoken', '0.0001 EOS', 'scatter 转账测试').then(result => {
-          alert('result:'+JSON.stringify(result));
+        // eos.transfer(currentAccount.name, 'giveeostoken', '0.0001 EOS', 'scatter 转账测试').then(result => {
+        //   alert('result:'+JSON.stringify(result));
+        // }).catch(error => {
+        //   alert('error:'+JSON.stringify(error));
+        // });
+
+        eos.transaction({
+            actions: [
+                {
+                    account: 'eosio.token',
+                    name:    'transfer',
+                    authorization: [{
+                        actor:      currentAccount.name,
+                        permission: currentAccount.authority
+                    }],
+                    data: {
+                        from: currentAccount.name,
+                        to: 'giveeostoken',
+                        quantity: '0.0001 EOS',
+                        memo: 'scatter 转账测试'
+                    }
+                }
+            ]
+        }).then(result => {
+          alert('success!');
         }).catch(error => {
           alert('error:'+JSON.stringify(error));
         });
 
       }
 
-      // airgrab
+      // airgrab way1 - eos.transaction - 推荐方式
       function airgrab(){
         if (currentAccount == null) {
             alert('请先登录');
@@ -102,7 +125,7 @@
         });
       }
 
-      // airgrab2
+      // airgrab way2 - eos.contract
       function airgrab2(){
         if (currentAccount == null) {
             alert('请先登录');
