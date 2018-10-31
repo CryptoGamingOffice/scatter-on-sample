@@ -1,10 +1,10 @@
 # scatter-eos-sample
 
-### 麦子钱包 Scatter API 开发示例
+### Scatter API 开发示例（由麦子钱包团队开发）
 
-#### eos/sample01
+#### 基于 Scatter 接口的 EOS 基础操作示例
 
-基于 Scatter 接口的 EOS 基础操作示例
+/eos/sample01
 
 测试地址：
 
@@ -41,11 +41,12 @@ chainId: 038f4b0fc8ff18a4f0842a8f0564611f6e96e8535901dd45e43ac8691a1c4dca
 
 ### 一些其他的有用参考
 
-#### eosforce/sample02
+#### 基于 Scatter 接口的 EOS 原力 基础操作示例
 
-基于 Scatter 接口的 EOS 原力 基础操作示例
+/eosforce/sample02
 
 测试地址：
+
 http://developer.mathwallet.org/sample02/
 
 原力的scatter插件配置方法（测试用）： https://zhuanlan.zhihu.com/p/43034314
