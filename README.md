@@ -82,3 +82,6 @@ https://mainnet.eoscanada.com/
 
 https://nodes.get-scatter.com/
 
+#### DAPP上线麦子钱包的方法
+
+http://blog.medishares.org/?p=398
