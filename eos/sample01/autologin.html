@@ -33,7 +33,7 @@
           if(connected){
 
             // 删除之前的登录账户
-            scatter.forgetIdentity();
+            // scatter.forgetIdentity();
 
             // 登录，获取 EOS 账户
             scatter.getIdentity({accounts:[network]}).then(result => {
@@ -48,8 +48,6 @@
             alert('connect fail');
           }
         });
-
-
       })
 
     </script>
