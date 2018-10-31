@@ -54,9 +54,9 @@ http://developer.mathwallet.org/sample02/
 
 https://github.com/eoshackathon/eos_dapp_development_cn/blob/master/docs/eosjs_manual.md
 
-#### 太平一犬的开源DICE项目
+#### DAPP开源项目列表
 
-https://github.com/gpmn/diceol
+http://blog.eosdata.io/index.php/eosopensource/
 
 #### 环境和常用开发文档
 
