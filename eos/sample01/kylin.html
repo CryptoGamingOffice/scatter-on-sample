@@ -18,10 +18,10 @@
 
     <script>
 
-    var chainId = 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
-    var endpoint = 'https://mainnet.eoscannon.io';
+    // kylin
+    var chainId = '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191';
+    var endpoint = 'https://api-kylin.eosasia.one';
 
-    var eos = null;
     var network = null;
     var identity = null;
 
@@ -35,6 +35,7 @@
         port: host.length > 1 ? host[0] : (httpEndpoint[0].toLowerCase() == 'https' ? 443 : 80),
         chainId: chainId,
         protocol: httpEndpoint[0],
+        httpEndpoint : "https://api-kylin.eosasia.one",
       };
 
       console.log(`网络参数：${JSON.stringify(network)}`);
@@ -156,9 +157,10 @@
           alert('请先登录');
       }
 
+      var eos = scatter.eos(network, Eos);
       const currentAccount = this.identity.accounts.find(x => x.blockchain === this.network.blockchain);
 
-      this.eos.transaction({
+      eos.transaction({
           actions: [
               {
                   account: 'eosatidiumio',
