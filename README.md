@@ -4,7 +4,9 @@
 
 #### 基于 Scatter 接口的 EOS 基础操作示例
 
-/eos/sample01
+/eos/sample01/index.html - 简单版本
+
+/eos/sample01/scatter.html - 完整版本（支持登录、登出、转账、日志等）
 
 测试地址：
 
