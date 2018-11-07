@@ -181,14 +181,7 @@
     }
 
     $(function(){
-      // 每次打开页面自动清理之前已登录的 identity
-      if (hasScatter()) {
-        scatter.connect('SAMPLE').then(connected => {
-          scatter.forgetIdentity().then(() => {
-            console.log('logout success');
-          });
-        });
-      }
+
     })
 
     </script>
