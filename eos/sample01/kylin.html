@@ -23,6 +23,7 @@
     var endpoint = 'https://api-kylin.eosasia.one';
 
     var eos = Eos({
+        keyProvider: '',// private key
         httpEndpoint: endpoint,
         chainId: chainId,
       });
@@ -39,7 +40,7 @@
         port: host.length > 1 ? host[0] : (httpEndpoint[0].toLowerCase() == 'https' ? 443 : 80),
         chainId: chainId,
         protocol: httpEndpoint[0],
-        httpEndpoint : "https://api-kylin.eosasia.one",
+        httpEndpoint : endpoint,
       };
 
       console.log(`网络参数：${JSON.stringify(network)}`);
@@ -108,23 +109,6 @@
       });
     }
 
-    function transfer(recipient, amount, memo, successCallback, errorCallback) {
-      let that = this;
-      if (that.identity == null) {
-        that.open(() => {
-          transfer(recipient, amount, memo, successCallback, errorCallback);
-        }, errorCallback);
-      } else {
-        const account = that.identity.accounts.find(x => x.blockchain === that.network.blockchain);
-        const transactionOptions = { authorization: [`${account.name}@${account.authority}`], broadcast: true, sign: true };
-        that.eos.transfer(account.name, recipient, amount, memo, transactionOptions).then(trx => {
-          successCallback(trx);
-        }).catch(error => {
-          errorCallback(error);
-        });
-      }
-    }
-
     function login() {
       if (!hasScatter()) {
         alert('scatter required');
@@ -163,11 +147,36 @@
 
     // 转账
     function transfereos(){
-      transfer('giveeostoken', '0.0001 EOS', 'scatter 转账测试', function (trx) {
-        console.log(`${new Date()} 交易ID: ${trx.transaction_id}`);
-      }, function (err) {
-        console.log(`${new Date()} 发现错误：${JSON.parse(err).error.details[0].message}`);
+      if (this.identity == null) {
+          alert('请先登录');
+      }
+
+      var eos = scatter.eos(network, Eos);
+      const currentAccount = this.identity.accounts.find(x => x.blockchain === this.network.blockchain);
+
+      eos.transaction({
+          actions: [
+              {
+                  account: 'eosio.token',
+                  name:    'transfer',
+                  authorization: [{
+                      actor:      currentAccount.name,
+                      permission: currentAccount.authority
+                  }],
+                  data: {
+                      from: currentAccount.name,
+                      to: 'lendeostoken',
+                      quantity: '0.0001 EOS',
+                      memo: 'scatter 转账测试'
+                  }
+              }
+          ]
+      }).then(result => {
+        alert('success!');
+      }).catch(error => {
+        alert('error:'+JSON.stringify(error));
       });
+
     }
 
     // airgrab way1 - eos.transaction - 推荐方式
@@ -182,15 +191,15 @@
       eos.transaction({
           actions: [
               {
-                  account: 'eosatidiumio',
-                  name:    'signup',
+                  account: 'erictest1112',
+                  name:    'voteproposal',
                   authorization: [{
                       actor:      currentAccount.name,
                       permission: currentAccount.authority
                   }],
                   data: {
-                      owner:    currentAccount.name,
-                      quantity: '0.0000 ATD'
+                      voter:    currentAccount.name,
+                      proposal_key: '1'
                   }
               }
           ]
@@ -202,14 +211,7 @@
     }
 
     $(function(){
-      // 每次打开页面自动清理之前已登录的 identity
-      if (hasScatter()) {
-        scatter.connect('SAMPLE').then(connected => {
-          scatter.forgetIdentity().then(() => {
-            console.log('logout success');
-          });
-        });
-      }
+
     })
 
     </script>
@@ -224,17 +226,18 @@
       <br><br><br>
       <div class="col-md-12"><button type="button" class="btn btn-warning btn-lg btn-block" onclick="transfereos()">转账</button></div>
       <br><br><br>
-      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">Airgrab ATD</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">Vote</button></div>
     </div>
   </div>
 
+  <br><br>
     <footer class="bs-docs-footer">
       <div class="container">
         <h3>工具:</h3>
         <p id="accountbalance"></p>
         <p id="accountcpu"></p>
         <p id="accountram"></p>
-        <p><a href="#" onclick="cleanscatter()">清理 Scatter 缓存账号</a></p>
+        <p><button type="button" class="btn btn-danger btn-lg btn-block" onclick="cleanscatter()">清理 Scatter 缓存账号</button></p>
       </div>
     </footer>
 

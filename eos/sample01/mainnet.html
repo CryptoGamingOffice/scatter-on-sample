@@ -18,10 +18,12 @@
 
     <script>
 
+    // kylin
     var chainId = 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
     var endpoint = 'https://mainnet.eoscannon.io';
 
     var eos = Eos({
+        keyProvider: '',// private key
         httpEndpoint: endpoint,
         chainId: chainId,
       });
@@ -38,6 +40,7 @@
         port: host.length > 1 ? host[0] : (httpEndpoint[0].toLowerCase() == 'https' ? 443 : 80),
         chainId: chainId,
         protocol: httpEndpoint[0],
+        httpEndpoint : endpoint,
       };
 
       console.log(`网络参数：${JSON.stringify(network)}`);
@@ -56,19 +59,27 @@
         eos.getAccount({ account_name: getAccountName() }).then(res => {
           var cb = res.core_liquid_balance;
           balance = res.length == 0 ? 0 : new Number(cb.split(' ')[0]).valueOf();
-          console.log('balance:'+cb);
+          console.log(getAccountName()+', '+cb);
+          $("#accountbalance").html(getAccountName()+', '+cb);
+
           var cl = res.cpu_limit;
           cpuAvailable = new Number((cl.available * 100 / cl.max)).toFixed(2) + '%';
           console.log(cpuAvailable);
+          $("#accountcpu").html('CPU: '+cpuAvailable);
           hasCPU = cl.available > 0 && ((cl.available / cl.max) >= 0.1);
-          setTimeout(checkAccount, 1000);
+
+          ramAvailable = new Number((res.ram_usage * 100 / res.ram_quota)).toFixed(2) + '%';
+          console.log(ramAvailable);
+          $("#accountram").html('RAM: '+ramAvailable);
+
+          // setTimeout(checkAccount, 1000);
         }).catch(err => {
           console.log(`检查账号出错：${JSON.stringify(err)}`);
-          setTimeout(checkAccount, 1000);
+          // setTimeout(checkAccount, 1000);
         });
       } catch (error) {
         console.log(`检查账号出错：${JSON.stringify(error)}`);
-        setTimeout(checkAccount, 1000);
+        // setTimeout(checkAccount, 1000);
       }
     }
 
@@ -98,23 +109,6 @@
       });
     }
 
-    function transfer(recipient, amount, memo, successCallback, errorCallback) {
-      let that = this;
-      if (that.identity == null) {
-        that.open(() => {
-          transfer(recipient, amount, memo, successCallback, errorCallback);
-        }, errorCallback);
-      } else {
-        const account = that.identity.accounts.find(x => x.blockchain === that.network.blockchain);
-        const transactionOptions = { authorization: [`${account.name}@${account.authority}`], broadcast: true, sign: true };
-        that.eos.transfer(account.name, recipient, amount, memo, transactionOptions).then(trx => {
-          successCallback(trx);
-        }).catch(error => {
-          errorCallback(error);
-        });
-      }
-    }
-
     function login() {
       if (!hasScatter()) {
         alert('scatter required');
@@ -139,13 +133,50 @@
         }
       }
     }
+
+    // 清理之前已登录的 identity
+    function cleanscatter() {
+      if (hasScatter()) {
+        scatter.connect('SAMPLE').then(connected => {
+          scatter.forgetIdentity().then(() => {
+            console.log('logout success');
+          });
+        });
+      }
+    }
+
     // 转账
     function transfereos(){
-      transfer('giveeostoken', '0.0001 EOS', 'scatter 转账测试', function (trx) {
-        console.log(`${new Date()} 交易ID: ${trx.transaction_id}`);
-      }, function (err) {
-        console.log(`${new Date()} 发现错误：${JSON.parse(err).error.details[0].message}`);
+      if (this.identity == null) {
+          alert('请先登录');
+      }
+
+      var eos = scatter.eos(network, Eos);
+      const currentAccount = this.identity.accounts.find(x => x.blockchain === this.network.blockchain);
+
+      eos.transaction({
+          actions: [
+              {
+                  account: 'eosio.token',
+                  name:    'transfer',
+                  authorization: [{
+                      actor:      currentAccount.name,
+                      permission: currentAccount.authority
+                  }],
+                  data: {
+                      from: currentAccount.name,
+                      to: 'lendeostoken',
+                      quantity: '0.0001 EOS',
+                      memo: 'scatter 转账测试'
+                  }
+              }
+          ]
+      }).then(result => {
+        alert('success!');
+      }).catch(error => {
+        alert('error:'+JSON.stringify(error));
       });
+
     }
 
     // airgrab way1 - eos.transaction - 推荐方式
@@ -154,20 +185,21 @@
           alert('请先登录');
       }
 
+      var eos = scatter.eos(network, Eos);
       const currentAccount = this.identity.accounts.find(x => x.blockchain === this.network.blockchain);
 
-      this.eos.transaction({
+      eos.transaction({
           actions: [
               {
-                  account: 'eosatidiumio',
-                  name:    'signup',
+                  account: 'erictest1112',
+                  name:    'voteproposal',
                   authorization: [{
                       actor:      currentAccount.name,
                       permission: currentAccount.authority
                   }],
                   data: {
-                      owner:    currentAccount.name,
-                      quantity: '0.0000 ATD'
+                      voter:    currentAccount.name,
+                      proposal_key: '1'
                   }
               }
           ]
@@ -186,7 +218,7 @@
   </head>
   <body>
   <div class="container bs-docs-container">
-    <h3>Scatter.js 调用方法实例 - EOS</h3>
+    <h3>Scatter.js 调用方法实例 - 主网</h3>
     <div class="row">
       <div class="col-md-12"><button type="button" class="btn btn-success btn-lg btn-block" onclick="login()">登录</button></div>
       <br><br><br>
@@ -194,8 +226,20 @@
       <br><br><br>
       <div class="col-md-12"><button type="button" class="btn btn-warning btn-lg btn-block" onclick="transfereos()">转账</button></div>
       <br><br><br>
-      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">Airgrab ATD</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">Vote</button></div>
     </div>
   </div>
+
+  <br><br>
+    <footer class="bs-docs-footer">
+      <div class="container">
+        <h3>工具:</h3>
+        <p id="accountbalance"></p>
+        <p id="accountcpu"></p>
+        <p id="accountram"></p>
+        <p><button type="button" class="btn btn-danger btn-lg btn-block" onclick="cleanscatter()">清理 Scatter 缓存账号</button></p>
+      </div>
+    </footer>
+
   </body>
 </html>
