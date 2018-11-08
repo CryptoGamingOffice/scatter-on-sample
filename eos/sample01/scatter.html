@@ -21,7 +21,10 @@
     var chainId = 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
     var endpoint = 'https://mainnet.eoscannon.io';
 
-    var eos = null;
+    var eos = Eos({
+        httpEndpoint: endpoint,
+        chainId: chainId,
+      });
     var network = null;
     var identity = null;
 
@@ -85,7 +88,6 @@
             }
             identity = i;
             console.log(identity.accounts[0].name);
-            eos = scatter.eos(network, Eos, { expireInSeconds: 60 }, "https");
             successCallback();
           }
         ).catch(error => {

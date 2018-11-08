@@ -22,6 +22,10 @@
     var chainId = '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191';
     var endpoint = 'https://api-kylin.eosasia.one';
 
+    var eos = Eos({
+        httpEndpoint: endpoint,
+        chainId: chainId,
+      });
     var network = null;
     var identity = null;
 
@@ -94,7 +98,6 @@
             }
             identity = i;
             console.log(identity.accounts[0].name);
-            eos = scatter.eos(network, Eos, { expireInSeconds: 60 }, "https");
             successCallback();
           }
         ).catch(error => {
