@@ -49,10 +49,6 @@
     }
 
     function checkAccount() {
-      if (state == 0) {
-        return;
-      }
-
       try {
         eos.getAccount({ account_name: getAccountName() }).then(res => {
           var cb = res.core_liquid_balance;
