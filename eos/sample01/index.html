@@ -18,37 +18,138 @@
 
     <script>
 
-      // EOS RPC 网络设置
-      var network = {
-        blockchain:'eos',
-        protocol:'https',
-        host:'mainnet.eoscannon.io',
-        port:443,
-        chainId:'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906'
-      };
+      // mainnet
+      var chainId = 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
+      var endpoint = 'https://mainnet.eoscannon.io';
+
+      // kylin
+      // var chainId = '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191';
+      // var endpoint = 'https://api-kylin.eosasia.one';
+
+      var eos = Eos({
+          keyProvider: '',
+          httpEndpoint: endpoint,
+          chainId: chainId,
+        });
+
+      var network = null;
+      var identity = null;
       var currentAccount = null;
 
-      // 连接
-      function connect(){
-        scatter.connect('MY_GAME_NAME').then(connected => {
-          if(connected){
-            alert('connect success');
-          }else{
-            alert('connect fail');
-          }
+      function checkoutNetworks() {
+        var httpEndpoint = endpoint.split('://');
+        var host = httpEndpoint[1].split(':');
+
+        network = {
+          blockchain: 'eos',
+          host: host[0],
+          port: host.length > 1 ? host[0] : (httpEndpoint[0].toLowerCase() == 'https' ? 443 : 80),
+          chainId: chainId,
+          protocol: httpEndpoint[0],
+          httpEndpoint : endpoint,
+        };
+
+        console.log(`网络参数：${JSON.stringify(network)}`);
+      }
+
+      function hasScatter() {
+        return scatter !== undefined;
+      }
+
+      function getAccountName() {
+        return identity == null || identity.accounts == null || identity.accounts[0].name;
+      }
+
+      function checkAccount() {
+        try {
+          eos.getAccount({ account_name: getAccountName() }).then(res => {
+            var cb = res.core_liquid_balance;
+            balance = res.length == 0 ? 0 : new Number(cb.split(' ')[0]).valueOf();
+            console.log(getAccountName()+', '+cb);
+
+            var cl = res.cpu_limit;
+            cpuAvailable = new Number((cl.available * 100 / cl.max)).toFixed(2) + '%';
+            console.log(cpuAvailable);
+            hasCPU = cl.available > 0 && ((cl.available / cl.max) >= 0.1);
+
+            ramAvailable = new Number((res.ram_usage * 100 / res.ram_quota)).toFixed(2) + '%';
+            console.log(ramAvailable);
+
+            // setTimeout(checkAccount, 1000);
+          }).catch(err => {
+            console.log(`检查账号出错：${JSON.stringify(err)}`);
+            // setTimeout(checkAccount, 1000);
+          });
+        } catch (error) {
+          console.log(`检查账号出错：${JSON.stringify(error)}`);
+          // setTimeout(checkAccount, 1000);
+        }
+      }
+
+      function open(successCallback, errorCallbak) {
+        let that = this;
+        if (!hasScatter()) {
+          errorCallbak("scatter required");
+          return;
+        }
+        checkoutNetworks();
+        scatter.suggestNetwork(network).then(() => {
+          const requirements = { accounts: [network] };
+          scatter.getIdentity(requirements).then(
+            function (i) {
+              if (!i) {
+                return errorCallbak(null);
+              }
+              identity = i;
+              currentAccount = identity.accounts[0];
+              console.log(identity.accounts[0].name);
+              // eos = scatter.eos(network, Eos, { expireInSeconds: 60 }, "https");
+              successCallback();
+            }
+          ).catch(error => {
+            errorCallbak(error);
+          });
+        }).catch(error => {
+          errorCallbak(error);
         });
       }
 
-      // 登录，获取 EOS 账户
-      function login(){
-        // scatter.forgetIdentity();
-        scatter.getIdentity({accounts:[network]}).then(result => {
-          currentAccount =  result.accounts[0];
-          alert('account:'+JSON.stringify(currentAccount));
-          // alert('account:'+currentAccount.name);
-        }).catch(error => {
-          alert('error:'+JSON.stringify(error));
+      function login() {
+        if (!hasScatter()) {
+          alert('scatter required');
+          return;
+        }
+        scatter.connect('SAMPLE').then(connected => {
+          open(function () {
+            alert(`登陆成功：${JSON.stringify(identity)}`);
+            console.log(`登陆成功：${JSON.stringify(identity)}`);
+            checkAccount();
+          }, function (error) {
+            console.log(`登陆出错：${JSON.stringify(error)}，请关闭重新打开或者刷新本页面`);
+          });
         });
+      }
+
+      function logout() {
+        if (identity) {
+          identity = null;
+          if (hasScatter()) {
+            scatter.forgetIdentity().then(() => {
+              console.log('logout success');
+            });
+          }
+        }
+      }
+
+      // 清理之前已登录的 identity
+      function cleanscatter() {
+        if (hasScatter()) {
+          scatter.connect('SAMPLE').then(connected => {
+            scatter.forgetIdentity().then(() => {
+              console.log('logout success');
+            });
+          });
+        }
       }
 
       // 转账
@@ -57,16 +158,7 @@
             alert('请先登录');
         }
 
-        // alert('account:'+currentAccount.name);
-
-        // alert(network.protocol+'://'+network.host);
         var eos = scatter.eos(network, Eos);
-
-        // eos.transfer(currentAccount.name, 'giveeostoken', '0.0001 EOS', 'scatter 转账测试').then(result => {
-        //   alert('result:'+JSON.stringify(result));
-        // }).catch(error => {
-        //   alert('error:'+JSON.stringify(error));
-        // });
 
         eos.transaction({
             actions: [
@@ -98,8 +190,6 @@
         if (currentAccount == null) {
             alert('请先登录');
         }
-        // alert(network.protocol+'://'+network.host);
-        // alert('account:'+currentAccount.name);
 
         var eos = scatter.eos(network, Eos);
 
@@ -130,8 +220,6 @@
         if (currentAccount == null) {
             alert('请先登录');
         }
-        // alert(network.protocol+'://'+network.host);
-        // alert('account:'+currentAccount.name);
 
         var eos = scatter.eos(network, Eos);
 
@@ -144,22 +232,23 @@
         });
       }
 
-
     </script>
   </head>
   <body>
   <div class="container bs-docs-container">
     <h3>Scatter.js 调用方法实例 - EOS</h3>
     <div class="row">
-      <div class="col-md-12"><button type="button" class="btn btn-primary btn-lg btn-block" onclick="connect()">测试连接</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-primary btn-lg btn-block" onclick="cleanscatter()">清理账号</button></div>
       <br><br><br>
       <div class="col-md-12"><button type="button" class="btn btn-success btn-lg btn-block" onclick="login()">登录</button></div>
       <br><br><br>
       <div class="col-md-12"><button type="button" class="btn btn-warning btn-lg btn-block" onclick="transfer()">转账</button></div>
       <br><br><br>
-      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">ATD 1</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">ATD Airgrab 1</button></div>
       <br><br><br>
-      <div class="col-md-12"><button type="button" class="btn btn-info btn-lg btn-block" onclick="airgrab2()">ATD 2</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-info btn-lg btn-block" onclick="airgrab2()">ATD Airgrab 2</button></div>
+      <br><br><br>
+      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="logout()">登出</button></div>
     </div>
   </div>
   </body>
