@@ -196,7 +196,7 @@
         eos.transaction({
             actions: [
                 {
-                    account: 'eosatidiumio',
+                    account: 'medisharesbp',
                     name:    'signup',
                     authorization: [{
                         actor:      currentAccount.name,
@@ -204,7 +204,7 @@
                     }],
                     data: {
                         owner:    currentAccount.name,
-                        quantity: '0.0000 ATD'
+                        quantity: '0.0000 EMDS'
                     }
                 }
             ]
@@ -223,8 +223,8 @@
 
         var eos = scatter.eos(network, Eos);
 
-        eos.contract("eosatidiumio").then(contr => {
-            contr.signup(currentAccount.name, '0.0000 ATD', {
+        eos.contract("medisharesbp").then(contr => {
+            contr.signup(currentAccount.name, '0.0000 EMDS', {
               authorization: [currentAccount.name]
             }).then(result => {
                 console.log(result);
@@ -244,9 +244,9 @@
       <br><br><br>
       <div class="col-md-12"><button type="button" class="btn btn-warning btn-lg btn-block" onclick="transfer()">转账</button></div>
       <br><br><br>
-      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">ATD Airgrab 1</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="airgrab()">EMDS Airgrab 1</button></div>
       <br><br><br>
-      <div class="col-md-12"><button type="button" class="btn btn-info btn-lg btn-block" onclick="airgrab2()">ATD Airgrab 2</button></div>
+      <div class="col-md-12"><button type="button" class="btn btn-info btn-lg btn-block" onclick="airgrab2()">EMDS Airgrab 2</button></div>
       <br><br><br>
       <div class="col-md-12"><button type="button" class="btn btn-danger btn-lg btn-block" onclick="logout()">登出</button></div>
     </div>
